@@ -19,6 +19,8 @@ public class GameController : MonoBehaviour
 
     private State state;
     public Text debugText;
+    public Text statusText;
+    public Text scoreText;
 
     public AudioSource musicSource;  // voice lines and pattern music
     public AudioSource soundSource;  // buttons
@@ -111,6 +113,7 @@ public class GameController : MonoBehaviour
                 {
                     state = State.Intro;
                     debugText.text = "Introduction";
+                    statusText.text = "(Currently playing intro)";
                     StartCoroutine(IntroSequence());
                 }
                 break;
@@ -118,6 +121,7 @@ public class GameController : MonoBehaviour
                 // just waiting while intro plays
                 break;
             case State.TutorialSlow:
+                statusText.text = "Press keys to the rhythm!";
                 ButtonPressCheck(tutorialSlowMusic, tutorialSlowBeats);
                 break;
             case State.TutorialFast:
@@ -161,7 +165,7 @@ public class GameController : MonoBehaviour
 
         state = State.TutorialSlow;
         debugText.text = "Tutorial 1";
-        
+
         StartCoroutine(TutorialSlowSequence());
 
         yield break;
@@ -323,6 +327,7 @@ public class GameController : MonoBehaviour
         if( score < scoreGoodEndingThreshold )
         {
             debugText.text = "Ending";
+            statusText.text = "(Ending playing)";
             // play the neutral ending voice line
             musicSource.loop = false;
             musicSource.PlayOneShot(neutralEndingVoiceLine1);
@@ -339,6 +344,7 @@ public class GameController : MonoBehaviour
         else
         {
             debugText.text = "Good Ending";
+            statusText.text = "(Good Ending playing)";
             // play the good ending voice line
             musicSource.loop = false;
             musicSource.PlayOneShot(goodEndingVoiceLine1);
@@ -359,6 +365,7 @@ public class GameController : MonoBehaviour
 
         state = State.End;
         debugText.text = "End";
+        statusText.text = "Thank you for playing!";
 
         yield break;
     }
