@@ -128,7 +128,7 @@ public class GameController : MonoBehaviour
                 ButtonPressCheck(tutorialFastMusic, tutorialFastBeats);
                 break;
             case State.MainLevel:
-                ButtonPressCheck(mainLevelMusic, mainLevelBeats);
+                ButtonPressCheck(mainLevelMusic, mainLevelBeats, 17.455f);
                 break;
             case State.End:
                 if( Input.anyKeyDown )
@@ -174,13 +174,18 @@ public class GameController : MonoBehaviour
     // modifies score
     public void ButtonPressCheck(AudioClip music, List<float> beats)
     {
+        ButtonPressCheck(music, beats, 0f);
+    }
+
+    public void ButtonPressCheck(AudioClip music, List<float> beats, float introOffset)
+    {
         if( Input.anyKeyDown )
         {
             // calculate timing
             float currentPlayThroughTime = (Time.time - startTime) % music.length;
             Debug.Log("currentPlayThroughTime:"+currentPlayThroughTime);
             // find the nearest beat
-            int beatIndex = beats.BinarySearch(currentPlayThroughTime);
+            int beatIndex = beats.BinarySearch(currentPlayThroughTime-introOffset);
             Debug.Log("1 beatIndex:"+beatIndex);
             if( beatIndex < 0 )
             {
@@ -196,7 +201,7 @@ public class GameController : MonoBehaviour
                 }
                 else
                 {
-                    if( Mathf.Abs(beats[nextLargestIndex] - currentPlayThroughTime) < Mathf.Abs(beats[nextLargestIndex-1] - currentPlayThroughTime))
+                    if( Mathf.Abs(introOffset + beats[nextLargestIndex] - currentPlayThroughTime) < Mathf.Abs(introOffset + beats[nextLargestIndex-1] - currentPlayThroughTime))
                     {
                         beatIndex = nextLargestIndex;
                     }
@@ -207,7 +212,7 @@ public class GameController : MonoBehaviour
                 }
             }
             Debug.Log("2 beatIndex:"+beatIndex);
-            float distanceFromNearestBeat = Mathf.Abs(beats[beatIndex] - currentPlayThroughTime);
+            float distanceFromNearestBeat = Mathf.Abs(introOffset + beats[beatIndex] - currentPlayThroughTime);
             Debug.Log("distanceFromNearestBeat:"+distanceFromNearestBeat);
             // score the button press
             if( distanceFromNearestBeat < perfectDistanceThreshold )
@@ -228,6 +233,7 @@ public class GameController : MonoBehaviour
                 soundSource.PlayOneShot(buttonSoundError);
                 score -= successDistanceThreshold;
             }
+            scoreText.text = "Score: "+score;
         }
     }
 
@@ -303,7 +309,7 @@ public class GameController : MonoBehaviour
         bool passed = false;
         while( !passed )
         {
-            yield return new WaitForSeconds(104.727f);
+            yield return new WaitForSeconds(142.909f);
 
             // check button press times
             debugText.text = "score:"+score+" target:"+scoreNeutralEndingThreshold+" target:"+scoreGoodEndingThreshold;
